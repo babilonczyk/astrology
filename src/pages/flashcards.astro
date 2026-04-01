@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { NavBar } from '../components/NavBar';
+import { FlashcardGame } from '../components/flashcards/FlashcardGame';
+---
+
+<BaseLayout title="Flashcards | Astrologia">
+  <NavBar currentPage="flashcards" client:load />
+  <FlashcardGame client:load />
+</BaseLayout>
