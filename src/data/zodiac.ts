@@ -58,7 +58,7 @@ export const elementData: Record<ElementKey, {
 
 export const zodiacData: ZodiacEntry[] = [
   { id: 1,  zodiacKey: 'aries',       zodiacSign: '\u2648', planetKey: 'mars',    planetIcon: '\u2642', sector: 1,  elementKey: 'fire',  elementPropertyKey: 'fire_cardinal' },
-  { id: 2,  zodiacKey: 'taurus',      zodiacSign: '\u2649', planetKey: 'earth',   planetIcon: '\u2641', sector: 2,  elementKey: 'earth', elementPropertyKey: 'earth_fixed' },
+  { id: 2,  zodiacKey: 'taurus',      zodiacSign: '\u2649', planetKey: 'earth',   planetIcon: '\u2295', sector: 2,  elementKey: 'earth', elementPropertyKey: 'earth_fixed' },
   { id: 3,  zodiacKey: 'gemini',      zodiacSign: '\u264A', planetKey: 'mercury', planetIcon: '\u263F', sector: 3,  elementKey: 'air',   elementPropertyKey: 'air_mutable' },
   { id: 4,  zodiacKey: 'cancer',      zodiacSign: '\u264B', planetKey: 'moon',    planetIcon: '\u263D', sector: 4,  elementKey: 'water', elementPropertyKey: 'water_cardinal' },
   { id: 5,  zodiacKey: 'leo',         zodiacSign: '\u264C', planetKey: 'sun',     planetIcon: '\u2609', sector: 5,  elementKey: 'fire',  elementPropertyKey: 'fire_fixed' },
@@ -78,7 +78,7 @@ export const planetIcons: Record<string, string> = {
   moon:    '\u263D',
   mercury: '\u263F',
   venus:   '\u2640',
-  earth:   '\u2641',
+  earth:   '\u2295',
   mars:    '\u2642',
   jupiter: '\u2643',
   saturn:  '\u2644',
