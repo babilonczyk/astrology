@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Flame, Trophy, Check, X, ArrowRight, Star, ChevronLeft } from 'lucide-react';
 import {
-  allRuneFields, pickRuneShownFields, pickRandomRune, getRuneFieldValue, formatRuneFieldDisplay,
+  allRuneFields, getActiveRuneFields, pickRuneShownFields, pickRandomRune, getRuneFieldValue, formatRuneFieldDisplay,
   getAllRuneNames, getAllRuneIcons, getAllRuneTranslations, getAllRuneSymbolRoots, getAllRuneElements,
   getAllKeySentenceKeys, getAllShadowSignKeys, getRuneKeySentence, getRuneShadowSign,
   getRandomDistractors,
@@ -39,7 +39,8 @@ export function RuneFlashcardGame() {
     if (saved) setBestStreak(parseInt(saved, 10) || 0);
   }, []);
 
-  const hiddenFields = allRuneFields.filter(f => !shownFields.includes(f));
+  const activeFields = mode !== null ? getActiveRuneFields(mode) : allRuneFields;
+  const hiddenFields = activeFields.filter(f => !shownFields.includes(f));
   const allFilled = hiddenFields.every(f => userAnswers[f]?.trim());
   const allCorrect = isChecked && hiddenFields.every(f => results[f]);
 
@@ -311,7 +312,7 @@ export function RuneFlashcardGame() {
 
             {/* Fields */}
             <div className="p-5 sm:p-7">
-              {fieldOrder.map((field, i) => {
+              {fieldOrder.filter(f => activeFields.includes(f)).map((field, i) => {
                 const isShown = shownFields.includes(field);
                 const value = getRuneFieldValue(currentEntry, field, locale);
                 const answer = userAnswers[field] || '';

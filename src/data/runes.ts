@@ -166,10 +166,29 @@ export const runeData: RuneEntry[] = [
 
 export const allRuneFields: RuneFieldType[] = ['runeName', 'runeIcon', 'runeNumber', 'translation', 'symbolRoot', 'element', 'keySentence', 'shadowSign'];
 
+export function getActiveRuneFields(mode: number): RuneFieldType[] {
+  if (mode === 1) return ['runeName', 'runeIcon'];
+  return allRuneFields;
+}
+
 export function pickRuneShownFields(mode: number): RuneFieldType[] {
+  if (mode === 1) {
+    // Level 1: only name and icon active, one shown, one hidden
+    const pair: RuneFieldType[] = ['runeName', 'runeIcon'];
+    return [pair[Math.random() < 0.5 ? 0 : 1]];
+  }
+
   const numShown = allRuneFields.length - mode;
-  const shuffled = [...allRuneFields].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, numShown);
+  let shuffled = [...allRuneFields].sort(() => Math.random() - 0.5);
+  let shown = shuffled.slice(0, numShown);
+
+  // Element must never be the sole visible field
+  if (shown.length === 1 && shown[0] === 'element') {
+    const others = allRuneFields.filter(f => f !== 'element');
+    shown = [others[Math.floor(Math.random() * others.length)]];
+  }
+
+  return shown;
 }
 
 export function pickRandomRune(excludeId?: number): RuneEntry {

@@ -2,7 +2,14 @@
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/playfair-display";
 @import "@fontsource/noto-sans-symbols-2";
-@import "@fontsource/noto-sans-runic";
+/* BabelStone Runic Elder Futhark – angular Elder Futhark glyphs (OFL 1.1) */
+@font-face {
+  font-family: "BabelStone Runic Elder Futhark";
+  src: url("/fonts/BabelStoneRunicElderFuthark.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @theme {
   --color-void: #09070E;
@@ -32,7 +39,7 @@
 
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display Variable", ui-serif, Georgia, serif;
-  --font-runic: "Noto Sans Runic", "Segoe UI Symbol", sans-serif;
+  --font-runic: "BabelStone Runic Elder Futhark", "Segoe UI Symbol", sans-serif;
 }
 
 .font-runic {
