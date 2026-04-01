@@ -54,7 +54,7 @@ export function RuneFlashcardGame() {
     setModalType(null);
     setIsChecked(false);
     setResults({});
-    setFieldOrder([...allRuneFields].sort(() => Math.random() - 0.5));
+    setFieldOrder(allRuneFields);
     setCardNumber(prev => prev + 1);
   }, []);
 

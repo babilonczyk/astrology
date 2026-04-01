@@ -46,7 +46,7 @@ export function FlashcardGame() {
     setModalType(null);
     setIsChecked(false);
     setResults({});
-    setFieldOrder([...allFields].sort(() => Math.random() - 0.5));
+    setFieldOrder(allFields);
     setCardNumber(prev => prev + 1);
   }, []);
 
