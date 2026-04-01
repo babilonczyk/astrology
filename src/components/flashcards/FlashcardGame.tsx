@@ -3,13 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Flame, Trophy, Check, X, ArrowRight, Star, ChevronLeft } from 'lucide-react';
 import {
   allFields, pickShownFields, pickRandomEntry, getFieldValue, formatFieldDisplay,
-  getAllZodiacNames, getAllPlanetNames,
   getZodiacName, getPlanetName, getZodiacKeyBySign, getPlanetKeyByIcon,
   type FieldType, type ZodiacEntry,
 } from '../../data/zodiac';
 import { type Locale, t, getLocaleFromCookie } from '../../lib/i18n';
 import { getCookie, setCookie } from '../../lib/cookies';
-import { isFuzzyMatch, isExactMatch } from '../../lib/fuzzy';
 import { SelectionModal } from './SelectionModal';
 import { ElementModal } from './ElementModal';
 
@@ -20,14 +18,13 @@ export function FlashcardGame() {
   const [shownFields, setShownFields] = useState<FieldType[]>([]);
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
   const [editingField, setEditingField] = useState<FieldType | null>(null);
-  const [modalType, setModalType] = useState<'zodiac' | 'planet' | 'element' | null>(null);
+  const [modalType, setModalType] = useState<'zodiac' | 'planet' | 'element' | 'zodiacName' | 'planetName' | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [results, setResults] = useState<Record<string, boolean>>({});
   const [currentStreak, setCurrentStreak] = useState(0);
   const [bestStreak, setBestStreak] = useState(0);
   const [cardNumber, setCardNumber] = useState(0);
   const [fieldOrder, setFieldOrder] = useState<FieldType[]>(allFields);
-  const [showFuzzyWarning, setShowFuzzyWarning] = useState(false);
 
   useEffect(() => {
     setLocale(getLocaleFromCookie());
@@ -49,7 +46,6 @@ export function FlashcardGame() {
     setModalType(null);
     setIsChecked(false);
     setResults({});
-    setShowFuzzyWarning(false);
     setFieldOrder([...allFields].sort(() => Math.random() - 0.5));
     setCardNumber(prev => prev + 1);
   }, []);
@@ -68,15 +64,9 @@ export function FlashcardGame() {
     for (const field of hiddenFields) {
       const correctValue = getFieldValue(currentEntry, field, locale);
       const answer = userAnswers[field] || '';
-      let ok = false;
-
-      if (field === 'zodiacSign' || field === 'planetIcon' || field === 'element') {
-        ok = answer === correctValue;
-      } else if (field === 'sector') {
-        ok = answer.trim() === correctValue;
-      } else {
-        ok = isExactMatch(answer, correctValue);
-      }
+      const ok = field === 'sector'
+        ? answer.trim() === correctValue
+        : answer === correctValue;
 
       newResults[field] = ok;
       if (!ok) correct = false;
@@ -97,49 +87,28 @@ export function FlashcardGame() {
     }
   };
 
-  const handleCheck = () => {
-    if (!currentEntry) return;
-
-    const textFields = hiddenFields.filter(
-      f => f === 'zodiacName' || f === 'planetName'
-    );
-    for (const field of textFields) {
-      const answer = userAnswers[field] || '';
-      const validOptions =
-        field === 'zodiacName'
-          ? getAllZodiacNames(locale)
-          : getAllPlanetNames(locale);
-
-      if (isFuzzyMatch(answer, validOptions)) {
-        setShowFuzzyWarning(true);
-        return;
-      }
-    }
-
-    evaluateAnswers();
-  };
-
   const handleFieldClick = (field: FieldType) => {
     if (isChecked || shownFields.includes(field)) return;
 
-    if (field === 'zodiacSign') {
-      setModalType('zodiac');
-      setEditingField(null);
-    } else if (field === 'planetIcon') {
-      setModalType('planet');
-      setEditingField(null);
-    } else if (field === 'element') {
-      setModalType('element');
-      setEditingField(null);
-    } else {
+    if (field === 'sector') {
       setEditingField(field);
+      return;
     }
+
+    setEditingField(null);
+    if (field === 'zodiacSign') setModalType('zodiac');
+    else if (field === 'planetIcon') setModalType('planet');
+    else if (field === 'zodiacName') setModalType('zodiacName');
+    else if (field === 'planetName') setModalType('planetName');
+    else if (field === 'element') setModalType('element');
   };
 
   const handleModalSelect = (value: string) => {
     let field: FieldType;
     if (modalType === 'zodiac') field = 'zodiacSign';
     else if (modalType === 'planet') field = 'planetIcon';
+    else if (modalType === 'zodiacName') field = 'zodiacName';
+    else if (modalType === 'planetName') field = 'planetName';
     else field = 'element';
     setUserAnswers(prev => ({ ...prev, [field]: value }));
     setModalType(null);
@@ -311,7 +280,7 @@ export function FlashcardGame() {
                 const answer = userAnswers[field] || '';
                 const isEditing = editingField === field;
                 const isSymbol = field === 'zodiacSign' || field === 'planetIcon';
-                const isModal = isSymbol || field === 'element';
+                const isModal = field !== 'sector';
                 const isNumber = field === 'sector';
                 const hasAnswer = answer.trim() !== '';
                 const fieldOk = results[field];
@@ -440,7 +409,7 @@ export function FlashcardGame() {
               <div className="mt-6">
                 {!isChecked ? (
                   <button
-                    onClick={handleCheck}
+                    onClick={evaluateAnswers}
                     disabled={!allFilled}
                     className={`w-full py-3.5 rounded-xl font-medium text-sm tracking-wide transition-all duration-200 ${
                       allFilled
@@ -477,16 +446,17 @@ export function FlashcardGame() {
         {t('game.chooseMode', locale)}
       </button>
 
-      {/* Selection Modal (zodiac / planet) */}
+      {/* Selection Modal (zodiac / planet / names) */}
       <SelectionModal
-        type={modalType === 'zodiac' ? 'zodiac' : 'planet'}
-        isOpen={modalType === 'zodiac' || modalType === 'planet'}
+        type={(modalType as 'zodiac' | 'planet' | 'zodiacName' | 'planetName') || 'zodiac'}
+        isOpen={modalType !== null && modalType !== 'element'}
         onClose={() => setModalType(null)}
         onSelect={handleModalSelect}
         title={
-          modalType === 'zodiac'
-            ? t('modal.chooseZodiac', locale)
-            : t('modal.choosePlanet', locale)
+          modalType === 'zodiac' ? t('modal.chooseZodiac', locale) :
+          modalType === 'zodiacName' ? t('modal.chooseZodiacName', locale) :
+          modalType === 'planetName' ? t('modal.choosePlanetName', locale) :
+          t('modal.choosePlanet', locale)
         }
         locale={locale}
       />
@@ -501,52 +471,6 @@ export function FlashcardGame() {
         locale={locale}
       />
 
-      {/* Fuzzy Warning */}
-      <AnimatePresence>
-        {showFuzzyWarning && (
-          <motion.div
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div
-              className="absolute inset-0 bg-void/80 backdrop-blur-sm"
-              onClick={() => setShowFuzzyWarning(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 8 }}
-              className="relative glass-gold rounded-2xl p-6 sm:p-8 max-w-sm text-center"
-            >
-              <h3 className="font-serif text-lg font-semibold text-warning mb-2">
-                {t('fuzzy.title', locale)}
-              </h3>
-              <p className="text-text-muted text-sm mb-6 leading-relaxed">
-                {t('fuzzy.message', locale)}
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowFuzzyWarning(false)}
-                  className="flex-1 py-3 rounded-xl border border-border text-sm text-text-strong hover:bg-surface-hover/50 transition-colors cursor-pointer"
-                >
-                  {t('fuzzy.fix', locale)}
-                </button>
-                <button
-                  onClick={() => {
-                    setShowFuzzyWarning(false);
-                    evaluateAnswers();
-                  }}
-                  className="flex-1 py-3 rounded-xl bg-gold/15 border border-gold/30 text-sm text-gold hover:bg-gold/25 transition-colors cursor-pointer"
-                >
-                  {t('fuzzy.confirm', locale)}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

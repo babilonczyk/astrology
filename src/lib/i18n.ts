@@ -53,6 +53,8 @@ const translations: Record<string, Record<Locale, string>> = {
   // Modals
   'modal.chooseZodiac': { en: 'Choose Zodiac Sign', pl: 'Wybierz znak zodiaku' },
   'modal.choosePlanet': { en: 'Choose Planet Icon', pl: 'Wybierz ikon\u0119 planety' },
+  'modal.chooseZodiacName': { en: 'Choose Zodiac Name', pl: 'Wybierz nazw\u0119 zodiaku' },
+  'modal.choosePlanetName': { en: 'Choose Planet Name', pl: 'Wybierz nazw\u0119 planety' },
   'modal.chooseElement': { en: 'Choose Element',    pl: 'Wybierz \u017Cywio\u0142' },
   'modal.chooseProperty': { en: 'Choose Property',  pl: 'Wybierz w\u0142a\u015Bciwo\u015B\u0107' },
 

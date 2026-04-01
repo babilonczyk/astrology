@@ -5,7 +5,7 @@ import { zodiacData, planetIcons, getZodiacName, getPlanetName, getZodiacKeyBySi
 import type { Locale } from '../../lib/i18n';
 
 interface SelectionModalProps {
-  type: 'zodiac' | 'planet';
+  type: 'zodiac' | 'planet' | 'zodiacName' | 'planetName';
   isOpen: boolean;
   onClose: () => void;
   onSelect: (value: string) => void;
@@ -25,16 +25,19 @@ export function SelectionModal({ type, isOpen, onClose, onSelect, title, locale 
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
-  const items = useMemo(() => (type === 'zodiac'
-    ? zodiacData.map(z => ({
-        value: z.zodiacSign,
-        symbol: z.zodiacSign,
-      }))
-    : Object.entries(planetIcons).map(([, icon]) => ({
-        value: icon,
-        symbol: icon,
-      }))
-  ).sort(() => Math.random() - 0.5), [type, isOpen]);
+  const isNameType = type === 'zodiacName' || type === 'planetName';
+
+  const items = useMemo(() => {
+    if (type === 'zodiac') {
+      return zodiacData.map(z => ({ value: z.zodiacSign, display: z.zodiacSign }));
+    } else if (type === 'planet') {
+      return Object.entries(planetIcons).map(([, icon]) => ({ value: icon, display: icon }));
+    } else if (type === 'zodiacName') {
+      return zodiacData.map(z => ({ value: getZodiacName(z.zodiacKey, locale), display: getZodiacName(z.zodiacKey, locale) }));
+    } else {
+      return Object.keys(planetIcons).map(key => ({ value: getPlanetName(key, locale), display: getPlanetName(key, locale) }));
+    }
+  }, [type, isOpen, locale]).sort(() => Math.random() - 0.5);
 
   return (
     <AnimatePresence>
@@ -76,15 +79,22 @@ export function SelectionModal({ type, isOpen, onClose, onSelect, title, locale 
             </div>
 
             {/* Grid */}
-            <div className={`grid gap-3 ${type === 'zodiac' ? 'grid-cols-4' : 'grid-cols-5'}`}>
+            <div className={`grid gap-3 ${
+              isNameType ? 'grid-cols-2 sm:grid-cols-3' :
+              type === 'zodiac' ? 'grid-cols-4' : 'grid-cols-5'
+            }`}>
               {items.map((item) => (
                 <button
                   key={item.value}
                   onClick={() => { onSelect(item.value); onClose(); }}
-                  className="group flex flex-col items-center gap-1.5 p-3 rounded-xl border border-transparent hover:border-gold/40 hover:bg-gold/5 transition-all cursor-pointer"
+                  className={`group flex flex-col items-center gap-1.5 rounded-xl border border-transparent hover:border-gold/40 hover:bg-gold/5 transition-all cursor-pointer ${
+                    isNameType ? 'py-3 px-4' : 'p-3'
+                  }`}
                 >
-                  <span className="text-3xl sm:text-4xl transition-transform group-hover:scale-110">
-                    {item.symbol}
+                  <span className={`transition-transform group-hover:scale-110 ${
+                    isNameType ? 'text-base sm:text-lg font-medium text-text-strong' : 'text-3xl sm:text-4xl'
+                  }`}>
+                    {item.display}
                   </span>
                 </button>
               ))}
