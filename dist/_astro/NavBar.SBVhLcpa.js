@@ -1,4 +1,4 @@
-import{c as x,g as h,j as e,t as d,s as p}from"./i18n.Cf90eb9j.js";import{r}from"./index.DiEladB3.js";/**
+import{c as x,g as h,j as e,t as d,s as p}from"./i18n.DAboMau1.js";import{r}from"./index.DiEladB3.js";/**
  * @license lucide-react v1.7.0 - ISC
  *
  * This source code is licensed under the ISC license.

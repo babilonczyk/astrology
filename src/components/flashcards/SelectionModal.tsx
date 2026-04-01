@@ -1,8 +1,9 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
-import { zodiacData, planetIcons, getZodiacName, getPlanetName, getZodiacKeyBySign, getPlanetKeyByIcon } from '../../data/zodiac';
+import { zodiacData, planetIcons, getZodiacName, getPlanetName } from '../../data/zodiac';
 import type { Locale } from '../../lib/i18n';
+import { AstroSymbol } from './AstroSymbol';
 
 interface SelectionModalProps {
   type: 'zodiac' | 'planet' | 'zodiacName' | 'planetName';
@@ -91,11 +92,15 @@ export function SelectionModal({ type, isOpen, onClose, onSelect, title, locale 
                     isNameType ? 'py-3 px-4' : 'p-3'
                   }`}
                 >
-                  <span className={`transition-transform group-hover:scale-110 ${
-                    isNameType ? 'text-base sm:text-lg font-medium text-text-strong' : 'text-3xl sm:text-4xl'
-                  }`}>
-                    {item.display}
-                  </span>
+                  {isNameType ? (
+                    <span className="transition-transform group-hover:scale-110 text-base sm:text-lg font-medium text-text-strong">
+                      {item.display}
+                    </span>
+                  ) : (
+                    <span className="transition-transform group-hover:scale-110">
+                      <AstroSymbol symbol={item.display} size={36} />
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

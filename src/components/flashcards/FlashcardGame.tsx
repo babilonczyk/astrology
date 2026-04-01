@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Flame, Trophy, Check, X, ArrowRight, Star, ChevronLeft } from 'lucide-react';
 import {
   allFields, pickShownFields, pickRandomEntry, getFieldValue, formatFieldDisplay,
-  getZodiacName, getPlanetName, getZodiacKeyBySign, getPlanetKeyByIcon,
   type FieldType, type ZodiacEntry,
 } from '../../data/zodiac';
 import { type Locale, t, getLocaleFromCookie } from '../../lib/i18n';
 import { getCookie, setCookie } from '../../lib/cookies';
 import { SelectionModal } from './SelectionModal';
 import { ElementModal } from './ElementModal';
+import { AstroSymbol } from './AstroSymbol';
 
 export function FlashcardGame() {
   const [locale, setLocale] = useState<Locale>('en');
@@ -112,19 +112,6 @@ export function FlashcardGame() {
     else field = 'element';
     setUserAnswers(prev => ({ ...prev, [field]: value }));
     setModalType(null);
-  };
-
-  // Helper: get name label for symbol fields
-  const getSymbolLabel = (field: FieldType, val: string): string | null => {
-    if (field === 'zodiacSign') {
-      const key = getZodiacKeyBySign(val);
-      return key ? getZodiacName(key, locale) : null;
-    }
-    if (field === 'planetIcon') {
-      const key = getPlanetKeyByIcon(val);
-      return key ? getPlanetName(key, locale) : null;
-    }
-    return null;
   };
 
   // Helper: format value for display (handles element encoding)
@@ -314,42 +301,35 @@ export function FlashcardGame() {
                       {isShown ? (
                         /* ── Revealed field ── */
                         <div>
-                          <div
-                            className={`font-medium text-gold-light ${
-                              isSymbol ? 'text-4xl leading-tight' : 'text-xl'
-                            }`}
-                          >
-                            {displayVal(field, value)}
-                          </div>
-                          {isSymbol && (
-                            <div className="text-sm text-text-muted/60 mt-1">
-                              {getSymbolLabel(field, value)}
+                          {isSymbol ? (
+                            <AstroSymbol symbol={displayVal(field, value)} className="text-gold-light" size={40} />
+                          ) : (
+                            <div className="font-medium text-gold-light text-xl">
+                              {displayVal(field, value)}
                             </div>
                           )}
                         </div>
                       ) : isChecked ? (
                         /* ── After check ── */
                         <div>
-                          <div
-                            className={`font-medium ${
-                              fieldOk ? 'text-success' : 'text-danger line-through'
-                            } ${isSymbol ? 'text-4xl leading-tight' : 'text-xl'}`}
-                          >
-                            {displayVal(field, answer) || '\u2014'}
-                          </div>
-                          {isSymbol && answer && (
-                            <div className={`text-sm mt-0.5 ${fieldOk ? 'text-success/60' : 'text-danger/60'}`}>
-                              {getSymbolLabel(field, answer)}
+                          {isSymbol ? (
+                            <AstroSymbol
+                              symbol={displayVal(field, answer) || '\u2014'}
+                              className={fieldOk ? 'text-success' : 'text-danger line-through'}
+                              size={40}
+                            />
+                          ) : (
+                            <div className={`font-medium text-xl ${fieldOk ? 'text-success' : 'text-danger line-through'}`}>
+                              {displayVal(field, answer) || '\u2014'}
                             </div>
                           )}
                           {!fieldOk && (
                             <div>
-                              <div className={`mt-1 text-success/80 ${isSymbol ? 'text-2xl' : 'text-sm'}`}>
-                                {displayVal(field, value)}
-                              </div>
-                              {isSymbol && (
-                                <div className="text-xs text-success/50 mt-0.5">
-                                  {getSymbolLabel(field, value)}
+                              {isSymbol ? (
+                                <AstroSymbol symbol={displayVal(field, value)} className="mt-1 text-success/80" size={28} />
+                              ) : (
+                                <div className="mt-1 text-sm text-success/80">
+                                  {displayVal(field, value)}
                                 </div>
                               )}
                             </div>
@@ -381,16 +361,11 @@ export function FlashcardGame() {
                       ) : hasAnswer ? (
                         /* ── Filled but not checked ── */
                         <div>
-                          <div
-                            className={`font-medium text-violet-light ${
-                              isSymbol ? 'text-4xl leading-tight' : 'text-xl'
-                            }`}
-                          >
-                            {displayVal(field, answer)}
-                          </div>
-                          {isSymbol && (
-                            <div className="text-sm text-text-muted/50 mt-1">
-                              {getSymbolLabel(field, answer)}
+                          {isSymbol ? (
+                            <AstroSymbol symbol={displayVal(field, answer)} className="text-violet-light" size={40} />
+                          ) : (
+                            <div className="font-medium text-violet-light text-xl">
+                              {displayVal(field, answer)}
                             </div>
                           )}
                         </div>
