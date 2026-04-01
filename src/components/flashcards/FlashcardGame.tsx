@@ -127,7 +127,7 @@ export function FlashcardGame() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center w-full max-w-lg"
+          className="text-center w-full max-w-xl"
         >
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-text-brightest mb-2">
             {t('game.title', locale)}
@@ -135,33 +135,56 @@ export function FlashcardGame() {
           <div className="ornament mb-4">
             <span className="text-gold text-xs">{'\u2726'}</span>
           </div>
-          <p className="text-text-muted mb-10">
+          <p className="text-text mb-10">
             {t('game.chooseMode', locale)}
           </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-            {([1, 2, 3, 4, 5] as const).map((m, i) => (
+          {/* Top row: 3 modes */}
+          <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-3 sm:mb-4">
+            {([1, 2, 3] as const).map((m, i) => (
               <motion.button
                 key={m}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 + i * 0.07 }}
+                transition={{ delay: 0.15 + i * 0.06 }}
                 onClick={() => startGame(m)}
-                className="glass-gold rounded-2xl p-5 flex flex-col items-center gap-3 cursor-pointer transition-all duration-200 hover:-translate-y-1"
+                className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2.5 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)]"
               >
-                <div className="flex gap-1">
+                <div className="flex gap-0.5">
                   {Array.from({ length: 5 }).map((_, j) => (
-                    <Star
-                      key={j}
-                      size={14}
-                      className={j < m ? 'text-gold fill-gold' : 'text-border'}
-                    />
+                    <Star key={j} size={12} className={j < m ? 'text-gold fill-gold' : 'text-border/40'} />
                   ))}
                 </div>
-                <div className="text-base font-medium text-text-strong">
+                <div className="text-sm font-semibold text-text-strong">
                   {t(`game.hidden${m}` as const, locale)}
                 </div>
-                <div className="text-xs text-text-muted">
+                <div className="text-[11px] text-text-muted font-medium">
+                  {t(`game.difficulty${m}` as const, locale)}
+                </div>
+              </motion.button>
+            ))}
+          </div>
+
+          {/* Bottom row: 2 modes */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            {([4, 5] as const).map((m, i) => (
+              <motion.button
+                key={m}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.35 + i * 0.06 }}
+                onClick={() => startGame(m)}
+                className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2.5 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)]"
+              >
+                <div className="flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, j) => (
+                    <Star key={j} size={12} className={j < m ? 'text-gold fill-gold' : 'text-border/40'} />
+                  ))}
+                </div>
+                <div className="text-sm font-semibold text-text-strong">
+                  {t(`game.hidden${m}` as const, locale)}
+                </div>
+                <div className="text-[11px] text-text-muted font-medium">
                   {t(`game.difficulty${m}` as const, locale)}
                 </div>
               </motion.button>
@@ -176,9 +199,9 @@ export function FlashcardGame() {
               transition={{ delay: 0.6 }}
               className="mt-10 flex items-center justify-center gap-2 text-text-muted"
             >
-              <Trophy size={16} />
+              <Trophy size={16} className="text-gold/60" />
               <span className="text-sm">
-                {t('game.best', locale)}: <strong className="text-text-strong">{bestStreak}</strong>
+                {t('game.best', locale)}: <strong className="text-gold">{bestStreak}</strong>
               </span>
             </motion.div>
           )}

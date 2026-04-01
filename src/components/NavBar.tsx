@@ -8,7 +8,7 @@ const languages: { code: Locale; flag: string; label: string }[] = [
 ];
 
 interface NavBarProps {
-  currentPage?: 'hub' | 'flashcards';
+  currentPage?: 'hub' | 'flashcards' | 'runes';
 }
 
 export function NavBar({ currentPage = 'hub' }: NavBarProps) {
@@ -56,9 +56,9 @@ export function NavBar({ currentPage = 'hub' }: NavBarProps) {
             </a>
           )}
           <a href="/" className="flex items-center gap-2 no-underline">
-            <span className="text-2xl" aria-hidden="true">{'\u2728'}</span>
-            <span className="font-serif text-xl font-semibold text-gold-gradient tracking-wide">
-              Astrologia
+            <span className="text-2xl" aria-hidden="true">{'\uD83D\uDD2E'}</span>
+            <span className="font-serif text-xl font-semibold text-violet-gradient tracking-wide">
+              {locale === 'pl' ? 'Ezoteryka' : 'Esoterica'}
             </span>
           </a>
         </div>

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/playfair-display";
+@import "@fontsource/noto-sans-symbols-2";
+@import "@fontsource/noto-sans-runic";
 
 @theme {
   --color-void: #09070E;
@@ -30,6 +32,11 @@
 
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display Variable", ui-serif, Georgia, serif;
+  --font-runic: "Noto Sans Runic", "Segoe UI Symbol", sans-serif;
+}
+
+.font-runic {
+  font-family: var(--font-runic);
 }
 
 * {
@@ -147,12 +154,20 @@ body {
   content: "";
   height: 1px;
   width: 60px;
-  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-violet), transparent);
 }
 
 /* Gold gradient text */
 .text-gold-gradient {
   background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold), var(--color-gold-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Violet gradient text (brand) */
+.text-violet-gradient {
+  background: linear-gradient(135deg, var(--color-violet-light), var(--color-violet), var(--color-violet-dark));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

@@ -74,24 +74,28 @@ export function ElementModal({ isOpen, onClose, onSelect, title, propertyTitle, 
       {isOpen && (
         <motion.div
           ref={backdropRef}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
         >
-          <div className="absolute inset-0 bg-void/80 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-void/85 backdrop-blur-md" />
 
           <motion.div
-            className="relative glass-gold rounded-2xl p-6 sm:p-8 w-full max-w-md"
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.2 }}
+            className="relative glass-gold rounded-t-3xl sm:rounded-2xl p-6 sm:p-8 w-full sm:max-w-md max-h-[85vh] overflow-y-auto"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             role="dialog"
             aria-label={step === 'element' ? title : propertyTitle}
           >
+            {/* Drag indicator (mobile) */}
+            <div className="sm:hidden flex justify-center mb-4">
+              <div className="w-10 h-1 rounded-full bg-border/60" />
+            </div>
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">

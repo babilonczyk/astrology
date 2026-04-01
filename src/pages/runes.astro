@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { NavBar } from '../components/NavBar';
+import { RuneFlashcardGame } from '../components/runes/RuneFlashcardGame';
+---
+
+<BaseLayout title="Rune Flashcards | Esoterica">
+  <NavBar currentPage="runes" client:load />
+  <RuneFlashcardGame client:load />
+</BaseLayout>
