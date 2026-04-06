@@ -6,7 +6,7 @@ import {
   getAllRuneNames, getAllRuneIcons, getAllRuneTranslations, getAllRuneSymbolRoots, getAllRuneElements,
   getAllKeySentenceKeys, getAllShadowSignKeys, getRuneKeySentence, getRuneShadowSign,
   getRandomDistractors,
-  type RuneFieldType, type RuneEntry,
+  type RuneFieldType, type RuneEntry, type RuneGameType,
 } from '../../data/runes';
 import { type Locale, t, getLocaleFromCookie } from '../../lib/i18n';
 import { getCookie, setCookie } from '../../lib/cookies';
@@ -20,6 +20,7 @@ const MAX_STARS = 7;
 
 export function RuneFlashcardGame() {
   const [locale, setLocale] = useState<Locale>('en');
+  const [gameType, setGameType] = useState<RuneGameType>('full');
   const [mode, setMode] = useState<number | null>(null);
   const [currentEntry, setCurrentEntry] = useState<RuneEntry | null>(null);
   const [shownFields, setShownFields] = useState<RuneFieldType[]>([]);
@@ -41,14 +42,14 @@ export function RuneFlashcardGame() {
     if (saved) setBestStreak(parseInt(saved, 10) || 0);
   }, []);
 
-  const activeFields = mode !== null ? getActiveRuneFields(mode) : allRuneFields;
+  const activeFields = getActiveRuneFields(gameType);
   const hiddenFields = activeFields.filter(f => !shownFields.includes(f));
   const allFilled = hiddenFields.every(f => userAnswers[f]?.trim());
   const allCorrect = isChecked && hiddenFields.every(f => results[f]);
 
-  const generateNewCard = useCallback((m: number, excludeId?: number) => {
+  const generateNewCard = useCallback((m: number, gt: RuneGameType, excludeId?: number) => {
     const entry = pickRandomRune(excludeId);
-    const shown = pickRuneShownFields(m);
+    const shown = pickRuneShownFields(m, gt);
     setCurrentEntry(entry);
     setShownFields(shown);
     setUserAnswers({});
@@ -63,9 +64,17 @@ export function RuneFlashcardGame() {
   }, []);
 
   const startGame = (selectedMode: number) => {
+    setGameType('full');
     setMode(selectedMode);
     setCurrentStreak(0);
-    generateNewCard(selectedMode);
+    generateNewCard(selectedMode, 'full');
+  };
+
+  const startPreview = () => {
+    setGameType('preview');
+    setMode(1);
+    setCurrentStreak(0);
+    generateNewCard(1, 'preview');
   };
 
   const evaluateAnswers = () => {
@@ -191,7 +200,22 @@ export function RuneFlashcardGame() {
           <div className="ornament mb-4">
             <span className="font-runic text-gold text-sm">{'\u16A0'}</span>
           </div>
-          <p className="text-text mb-10">{t('game.chooseMode', locale)}</p>
+          {/* Preview */}
+          <p className="text-text-muted text-xs uppercase tracking-[0.15em] mb-3">{t('game.preview', locale)}</p>
+          <div className="flex justify-center mb-8">
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              onClick={() => startPreview()}
+              className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)] w-full max-w-[200px]"
+            >
+              <span className="font-runic text-2xl text-gold">{'\u16A0'}</span>
+              <div className="text-sm font-semibold text-text-strong">{t('game.previewRune', locale)}</div>
+            </motion.button>
+          </div>
+
+          <p className="text-text-muted text-xs uppercase tracking-[0.15em] mb-3">{t('game.chooseMode', locale)}</p>
 
           {/* Top row: modes 1-4 */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-3 sm:mb-4">
@@ -439,7 +463,7 @@ export function RuneFlashcardGame() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => generateNewCard(mode!, currentEntry?.id)}
+                    onClick={() => generateNewCard(mode!, gameType, currentEntry?.id)}
                     className="w-full py-3.5 rounded-xl font-medium text-sm tracking-wide bg-gold/15 border border-gold/30 text-gold hover:bg-gold/25 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {t('game.next', locale)}
@@ -454,7 +478,7 @@ export function RuneFlashcardGame() {
 
       {/* Change difficulty */}
       <button
-        onClick={() => { setMode(null); setCurrentStreak(0); }}
+        onClick={() => { setMode(null); setGameType('full'); setCurrentStreak(0); }}
         className="mt-6 flex items-center gap-1.5 text-sm text-text-muted/50 hover:text-text-muted transition-colors cursor-pointer"
       >
         <ChevronLeft size={14} />

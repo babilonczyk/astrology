@@ -45,6 +45,10 @@ const translations: Record<string, Record<Locale, string>> = {
   'game.typeAnswer':   { en: 'Type your answer...', pl: 'Wpisz odpowied\u017A...' },
   'game.enterSector':  { en: 'Enter sector (1\u201312)', pl: 'Wpisz sektor (1\u201312)' },
   'game.tryAgain':     { en: 'Try Again',           pl: 'Spr\u00F3buj ponownie' },
+  'game.preview':      { en: 'Preview',             pl: 'Podgl\u0105d' },
+  'game.previewZodiac': { en: 'Zodiac Signs',       pl: 'Znaki zodiaku' },
+  'game.previewPlanet': { en: 'Planets',            pl: 'Planety' },
+  'game.previewRune':  { en: 'Name & Symbol',      pl: 'Nazwa i symbol' },
 
   // Field labels
   'field.zodiacName':  { en: 'Zodiac Name',         pl: 'Nazwa zodiaku' },

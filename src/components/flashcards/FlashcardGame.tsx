@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Flame, Trophy, Check, X, ArrowRight, Star, ChevronLeft } from 'lucide-react';
 import {
   allFields, getActiveFields, pickShownFields, pickRandomEntry, getFieldValue, formatFieldDisplay,
-  type FieldType, type ZodiacEntry,
+  type FieldType, type ZodiacEntry, type AstroGameType,
 } from '../../data/zodiac';
 import { type Locale, t, getLocaleFromCookie } from '../../lib/i18n';
 import { getCookie, setCookie } from '../../lib/cookies';
@@ -13,6 +13,7 @@ import { AstroSymbol } from './AstroSymbol';
 
 export function FlashcardGame() {
   const [locale, setLocale] = useState<Locale>('en');
+  const [gameType, setGameType] = useState<AstroGameType>('full');
   const [mode, setMode] = useState<number | null>(null);
   const [currentEntry, setCurrentEntry] = useState<ZodiacEntry | null>(null);
   const [shownFields, setShownFields] = useState<FieldType[]>([]);
@@ -32,14 +33,14 @@ export function FlashcardGame() {
     if (saved) setBestStreak(parseInt(saved, 10) || 0);
   }, []);
 
-  const activeFields = mode !== null ? getActiveFields(mode) : allFields;
+  const activeFields = getActiveFields(gameType);
   const hiddenFields = activeFields.filter(f => !shownFields.includes(f));
   const allFilled = hiddenFields.every(f => userAnswers[f]?.trim());
   const allCorrect = isChecked && hiddenFields.every(f => results[f]);
 
-  const generateNewCard = useCallback((m: number, excludeId?: number) => {
+  const generateNewCard = useCallback((m: number, gt: AstroGameType, excludeId?: number) => {
     const entry = pickRandomEntry(excludeId);
-    const shown = pickShownFields(m);
+    const shown = pickShownFields(m, gt);
     setCurrentEntry(entry);
     setShownFields(shown);
     setUserAnswers({});
@@ -52,9 +53,17 @@ export function FlashcardGame() {
   }, []);
 
   const startGame = (selectedMode: number) => {
+    setGameType('full');
     setMode(selectedMode);
     setCurrentStreak(0);
-    generateNewCard(selectedMode);
+    generateNewCard(selectedMode, 'full');
+  };
+
+  const startPreview = (gt: AstroGameType) => {
+    setGameType(gt);
+    setMode(1);
+    setCurrentStreak(0);
+    generateNewCard(1, gt);
   };
 
   const evaluateAnswers = () => {
@@ -136,7 +145,32 @@ export function FlashcardGame() {
           <div className="ornament mb-4">
             <span className="text-gold text-xs">{'\u2726'}</span>
           </div>
-          <p className="text-text mb-10">
+          {/* Preview buttons */}
+          <p className="text-text-muted text-xs uppercase tracking-[0.15em] mb-3">{t('game.preview', locale)}</p>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              onClick={() => startPreview('previewZodiac')}
+              className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)]"
+            >
+              <span className="text-2xl">{'\u2648'}</span>
+              <div className="text-sm font-semibold text-text-strong">{t('game.previewZodiac', locale)}</div>
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.16 }}
+              onClick={() => startPreview('previewPlanet')}
+              className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)]"
+            >
+              <span className="text-2xl">{'\u2643'}</span>
+              <div className="text-sm font-semibold text-text-strong">{t('game.previewPlanet', locale)}</div>
+            </motion.button>
+          </div>
+
+          <p className="text-text-muted text-xs uppercase tracking-[0.15em] mb-3">
             {t('game.chooseMode', locale)}
           </p>
 
@@ -420,7 +454,7 @@ export function FlashcardGame() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => generateNewCard(mode!, currentEntry?.id)}
+                    onClick={() => generateNewCard(mode!, gameType, currentEntry?.id)}
                     className="w-full py-3.5 rounded-xl font-medium text-sm tracking-wide bg-gold/15 border border-gold/30 text-gold hover:bg-gold/25 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {t('game.next', locale)}
@@ -437,6 +471,7 @@ export function FlashcardGame() {
       <button
         onClick={() => {
           setMode(null);
+          setGameType('full');
           setCurrentStreak(0);
         }}
         className="mt-6 flex items-center gap-1.5 text-sm text-text-muted/50 hover:text-text-muted transition-colors cursor-pointer"

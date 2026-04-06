@@ -166,14 +166,15 @@ export const runeData: RuneEntry[] = [
 
 export const allRuneFields: RuneFieldType[] = ['runeName', 'runeIcon', 'runeNumber', 'translation', 'symbolRoot', 'element', 'keySentence', 'shadowSign'];
 
-export function getActiveRuneFields(mode: number): RuneFieldType[] {
-  if (mode === 1) return ['runeName', 'runeIcon'];
+export type RuneGameType = 'full' | 'preview';
+
+export function getActiveRuneFields(gameType: RuneGameType): RuneFieldType[] {
+  if (gameType === 'preview') return ['runeName', 'runeIcon'];
   return allRuneFields;
 }
 
-export function pickRuneShownFields(mode: number): RuneFieldType[] {
-  if (mode === 1) {
-    // Level 1: only name and icon active, one shown, one hidden
+export function pickRuneShownFields(mode: number, gameType: RuneGameType = 'full'): RuneFieldType[] {
+  if (gameType === 'preview') {
     const pair: RuneFieldType[] = ['runeName', 'runeIcon'];
     return [pair[Math.random() < 0.5 ? 0 : 1]];
   }

@@ -92,16 +92,21 @@ export const allPlanetIcons = Object.values(planetIcons);
 
 export const allFields: FieldType[] = ['zodiacName', 'zodiacSign', 'planetName', 'planetIcon', 'sector', 'element'];
 
-export function getActiveFields(mode: number): FieldType[] {
-  if (mode === 1) return ['zodiacName', 'zodiacSign'];
+export type AstroGameType = 'full' | 'previewZodiac' | 'previewPlanet';
+
+export function getActiveFields(gameType: AstroGameType): FieldType[] {
+  if (gameType === 'previewZodiac') return ['zodiacName', 'zodiacSign'];
+  if (gameType === 'previewPlanet') return ['planetName', 'planetIcon'];
   return allFields;
 }
 
-// All fields are unique identifiers (each value maps to exactly one zodiac entry)
-export function pickShownFields(mode: number): FieldType[] {
-  if (mode === 1) {
-    // Level 1: only name and sign active, one shown, one hidden
+export function pickShownFields(mode: number, gameType: AstroGameType = 'full'): FieldType[] {
+  if (gameType === 'previewZodiac') {
     const pair: FieldType[] = ['zodiacName', 'zodiacSign'];
+    return [pair[Math.random() < 0.5 ? 0 : 1]];
+  }
+  if (gameType === 'previewPlanet') {
+    const pair: FieldType[] = ['planetName', 'planetIcon'];
     return [pair[Math.random() < 0.5 ? 0 : 1]];
   }
   const numShown = 6 - mode;
