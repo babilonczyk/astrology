@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 
@@ -7,14 +7,13 @@ interface TripleChoiceModalProps {
   onClose: () => void;
   onSelect: (value: string) => void;
   title: string;
-  correctKey: string;
+  options: string[];
   getDisplay: (key: string) => string;
-  allKeys: string[];
 }
 
 export function TripleChoiceModal({
   isOpen, onClose, onSelect, title,
-  correctKey, getDisplay, allKeys,
+  options, getDisplay,
 }: TripleChoiceModalProps) {
   const backdropRef = useRef<HTMLDivElement>(null);
 
@@ -24,14 +23,6 @@ export function TripleChoiceModal({
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
-
-  const options = useMemo(() => {
-    const others = allKeys.filter(k => k !== correctKey);
-    const shuffledOthers = [...others].sort(() => Math.random() - 0.5);
-    const distractors = shuffledOthers.slice(0, 2);
-    return [correctKey, ...distractors].sort(() => Math.random() - 0.5);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
 
   const labels = ['A', 'B', 'C'];
 

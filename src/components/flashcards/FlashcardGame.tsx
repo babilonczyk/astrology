@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Flame, Trophy, Check, X, ArrowRight, Star, ChevronLeft } from 'lucide-react';
 import {
-  allFields, pickShownFields, pickRandomEntry, getFieldValue, formatFieldDisplay,
+  allFields, getActiveFields, pickShownFields, pickRandomEntry, getFieldValue, formatFieldDisplay,
   type FieldType, type ZodiacEntry,
 } from '../../data/zodiac';
 import { type Locale, t, getLocaleFromCookie } from '../../lib/i18n';
@@ -32,7 +32,8 @@ export function FlashcardGame() {
     if (saved) setBestStreak(parseInt(saved, 10) || 0);
   }, []);
 
-  const hiddenFields = allFields.filter(f => !shownFields.includes(f));
+  const activeFields = mode !== null ? getActiveFields(mode) : allFields;
+  const hiddenFields = activeFields.filter(f => !shownFields.includes(f));
   const allFilled = hiddenFields.every(f => userAnswers[f]?.trim());
   const allCorrect = isChecked && hiddenFields.every(f => results[f]);
 
@@ -284,7 +285,7 @@ export function FlashcardGame() {
 
             {/* Fields */}
             <div className="p-5 sm:p-7">
-              {fieldOrder.map((field, i) => {
+              {fieldOrder.filter(f => activeFields.includes(f)).map((field, i) => {
                 const isShown = shownFields.includes(field);
                 const value = getFieldValue(currentEntry, field, locale);
                 const answer = userAnswers[field] || '';

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Flame, Trophy, Check, X, ArrowRight, Star, ChevronLeft } from 'lucide-react';
 import {
@@ -32,6 +32,8 @@ export function RuneFlashcardGame() {
   const [bestStreak, setBestStreak] = useState(0);
   const [cardNumber, setCardNumber] = useState(0);
   const [fieldOrder, setFieldOrder] = useState<RuneFieldType[]>(allRuneFields);
+  const cachedModalItems = useRef<Record<string, { value: string; display: string }[]>>({});
+  const cachedTripleOptions = useRef<Record<string, string[]>>({});
 
   useEffect(() => {
     setLocale(getLocaleFromCookie());
@@ -55,6 +57,8 @@ export function RuneFlashcardGame() {
     setIsChecked(false);
     setResults({});
     setFieldOrder(allRuneFields);
+    cachedModalItems.current = {};
+    cachedTripleOptions.current = {};
     setCardNumber(prev => prev + 1);
   }, []);
 
@@ -113,38 +117,38 @@ export function RuneFlashcardGame() {
   const isRuneSymbol = (field: RuneFieldType) => field === 'runeIcon';
   const isLongText = (field: RuneFieldType) => field === 'keySentence' || field === 'shadowSign';
 
-  /* ── Modal items (7 choices: 1 correct + 6 distractors) ── */
+  /* ── Modal items (7 choices: 1 correct + 6 distractors, cached per card) ── */
   const getModalItems = (): { value: string; display: string }[] => {
     if (!currentEntry || !modalType) return [];
+    if (cachedModalItems.current[modalType]) return cachedModalItems.current[modalType];
 
     const pick7 = (correctVal: string, allVals: { value: string; display: string }[]) => {
       const allKeys = allVals.map(v => v.value);
       const distractorKeys = getRandomDistractors(correctVal, allKeys, 6);
       const chosen = [correctVal, ...distractorKeys];
-      return allVals.filter(v => chosen.includes(v.value));
+      return allVals.filter(v => chosen.includes(v.value)).sort(() => Math.random() - 0.5);
     };
 
+    let items: { value: string; display: string }[] = [];
     if (modalType === 'runeName') {
       const all = getAllRuneNames().map(n => ({ value: n, display: n }));
-      return pick7(currentEntry.name, all);
-    }
-    if (modalType === 'runeIcon') {
+      items = pick7(currentEntry.name, all);
+    } else if (modalType === 'runeIcon') {
       const all = getAllRuneIcons().map(i => ({ value: i, display: i }));
-      return pick7(currentEntry.icon, all);
-    }
-    if (modalType === 'translation') {
+      items = pick7(currentEntry.icon, all);
+    } else if (modalType === 'translation') {
       const all = getAllRuneTranslations(locale).map(t => ({ value: t.key, display: t.display }));
-      return pick7(currentEntry.translationKey, all);
-    }
-    if (modalType === 'symbolRoot') {
+      items = pick7(currentEntry.translationKey, all);
+    } else if (modalType === 'symbolRoot') {
       const all = getAllRuneSymbolRoots(locale).map(s => ({ value: s.key, display: s.display }));
-      return pick7(currentEntry.symbolRootKey, all);
-    }
-    if (modalType === 'element') {
+      items = pick7(currentEntry.symbolRootKey, all);
+    } else if (modalType === 'element') {
       const all = getAllRuneElements(locale).map(e => ({ value: e.key, display: e.display }));
-      return pick7(currentEntry.elementKey, all);
+      items = pick7(currentEntry.elementKey, all);
     }
-    return [];
+
+    cachedModalItems.current[modalType] = items;
+    return items;
   };
 
   const getModalTitle = () => {
@@ -156,6 +160,16 @@ export function RuneFlashcardGame() {
     if (modalType === 'keySentence') return t('rune.modal.chooseKeySentence', locale);
     if (modalType === 'shadowSign') return t('rune.modal.chooseShadowSign', locale);
     return '';
+  };
+
+  const getTripleOptions = (field: string, correctKey: string, allKeys: string[]): string[] => {
+    if (cachedTripleOptions.current[field]) return cachedTripleOptions.current[field];
+    const others = allKeys.filter(k => k !== correctKey);
+    const shuffledOthers = [...others].sort(() => Math.random() - 0.5);
+    const distractors = shuffledOthers.slice(0, 2);
+    const options = [correctKey, ...distractors].sort(() => Math.random() - 0.5);
+    cachedTripleOptions.current[field] = options;
+    return options;
   };
 
   const isTripleChoice = modalType === 'keySentence' || modalType === 'shadowSign';
@@ -465,9 +479,8 @@ export function RuneFlashcardGame() {
           onClose={() => setModalType(null)}
           onSelect={handleModalSelect}
           title={getModalTitle()}
-          correctKey={currentEntry.keySentenceKey}
+          options={getTripleOptions('keySentence', currentEntry.keySentenceKey, getAllKeySentenceKeys())}
           getDisplay={key => getRuneKeySentence(key, locale)}
-          allKeys={getAllKeySentenceKeys()}
         />
       )}
 
@@ -478,9 +491,8 @@ export function RuneFlashcardGame() {
           onClose={() => setModalType(null)}
           onSelect={handleModalSelect}
           title={getModalTitle()}
-          correctKey={currentEntry.shadowSignKey}
+          options={getTripleOptions('shadowSign', currentEntry.shadowSignKey, getAllShadowSignKeys())}
           getDisplay={key => getRuneShadowSign(key, locale)}
-          allKeys={getAllShadowSignKeys()}
         />
       )}
     </div>

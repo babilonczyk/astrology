@@ -159,7 +159,7 @@ export const runeData: RuneEntry[] = [
   { id: 19, name: 'Ehwaz',    icon: '\u16D6', translationKey: 'ehwaz',    symbolRootKey: 'ehwaz',    elementKey: 'all',              keySentenceKey: 'ehwaz',    shadowSignKey: 'ehwaz' },
   { id: 20, name: 'Mannaz',   icon: '\u16D7', translationKey: 'mannaz',   symbolRootKey: 'mannaz',   elementKey: 'all',              keySentenceKey: 'mannaz',   shadowSignKey: 'mannaz' },
   { id: 21, name: 'Laguz',    icon: '\u16DA', translationKey: 'laguz',    symbolRootKey: 'laguz',    elementKey: 'water',            keySentenceKey: 'laguz',    shadowSignKey: 'laguz' },
-  { id: 22, name: 'Ingwaz',   icon: '\u16DC', translationKey: 'ingwaz',   symbolRootKey: 'ingwaz',   elementKey: 'all',              keySentenceKey: 'ingwaz',   shadowSignKey: 'ingwaz' },
+  { id: 22, name: 'Ingwaz',   icon: '\u16DD', translationKey: 'ingwaz',   symbolRootKey: 'ingwaz',   elementKey: 'all',              keySentenceKey: 'ingwaz',   shadowSignKey: 'ingwaz' },
   { id: 23, name: 'Dagaz',    icon: '\u16DE', translationKey: 'dagaz',    symbolRootKey: 'dagaz',    elementKey: 'fire',             keySentenceKey: 'dagaz',    shadowSignKey: 'dagaz' },
   { id: 24, name: 'Othala',   icon: '\u16DF', translationKey: 'othala',   symbolRootKey: 'othala',   elementKey: 'earth',            keySentenceKey: 'othala',   shadowSignKey: 'othala' },
 ];

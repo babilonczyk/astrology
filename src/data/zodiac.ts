@@ -92,8 +92,18 @@ export const allPlanetIcons = Object.values(planetIcons);
 
 export const allFields: FieldType[] = ['zodiacName', 'zodiacSign', 'planetName', 'planetIcon', 'sector', 'element'];
 
+export function getActiveFields(mode: number): FieldType[] {
+  if (mode === 1) return ['zodiacName', 'zodiacSign'];
+  return allFields;
+}
+
 // All fields are unique identifiers (each value maps to exactly one zodiac entry)
 export function pickShownFields(mode: number): FieldType[] {
+  if (mode === 1) {
+    // Level 1: only name and sign active, one shown, one hidden
+    const pair: FieldType[] = ['zodiacName', 'zodiacSign'];
+    return [pair[Math.random() < 0.5 ? 0 : 1]];
+  }
   const numShown = 6 - mode;
   const shuffled = [...allFields].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, numShown);

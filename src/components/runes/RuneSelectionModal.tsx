@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 
@@ -24,12 +24,6 @@ export function RuneSelectionModal({
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
-
-  const shuffled = useMemo(
-    () => [...items].sort(() => Math.random() - 0.5),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isOpen],
-  );
 
   return (
     <AnimatePresence>
@@ -74,7 +68,7 @@ export function RuneSelectionModal({
               className="grid gap-2"
               style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
             >
-              {shuffled.map(item => (
+              {items.map(item => (
                 <button
                   key={item.value}
                   onClick={() => { onSelect(item.value); onClose(); }}
