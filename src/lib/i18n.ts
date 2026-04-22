@@ -48,7 +48,9 @@ const translations: Record<string, Record<Locale, string>> = {
   'game.preview':      { en: 'Preview',             pl: 'Podgl\u0105d' },
   'game.previewZodiac': { en: 'Zodiac Signs',       pl: 'Znaki zodiaku' },
   'game.previewPlanet': { en: 'Planets',            pl: 'Planety' },
-  'game.previewRune':  { en: 'Name & Symbol',      pl: 'Nazwa i symbol' },
+  'game.previewRune':     { en: 'Name & Symbol',      pl: 'Nazwa i symbol' },
+  'game.previewAspects':  { en: 'Aspects',            pl: 'Aspekty' },
+  'game.previewFundament':{ en: 'Foundation',          pl: 'Fundament' },
 
   // Field labels
   'field.zodiacName':  { en: 'Zodiac Name',         pl: 'Nazwa zodiaku' },
@@ -95,6 +97,38 @@ const translations: Record<string, Record<Locale, string>> = {
   'rune.modal.chooseElement':     { en: 'Choose Element',       pl: 'Wybierz \u017Cywio\u0142' },
   'rune.modal.chooseKeySentence': { en: 'Choose Key Sentence',  pl: 'Wybierz zdanie klucz' },
   'rune.modal.chooseShadowSign':  { en: 'Choose Shadow Sign',   pl: 'Wybierz znak w cieniu' },
+
+  // Hub - Aspekty
+  'hub.aspekty':      { en: 'Aspect Flashcards',   pl: 'Fiszki aspekt\u00F3w' },
+  'hub.aspekty.desc': {
+    en: 'Learn astrological aspects \u2013 conjunction, sextile, trine, square, opposition and more \u2013 with symbol and name flashcards.',
+    pl: 'Poznaj aspekty astrologiczne \u2013 koniunkcj\u0119, sekstyl, trygon, kwadrat, opozycj\u0119 i inne \u2013 za pomoc\u0105 fiszek symbol\u00F3w i nazw.',
+  },
+
+  // Hub - Fundament
+  'hub.fundament':      { en: 'Foundation Flashcards', pl: 'Fiszki fundamentu' },
+  'hub.fundament.desc': {
+    en: 'Master the foundational symbols \u2013 special points (Asc, MC, nodes), qualities (cardinal, fixed, mutable) and elements (fire, earth, air, water).',
+    pl: 'Opanuj podstawowe symbole \u2013 punkty specjalne (Asc, MC, w\u0119z\u0142y), jako\u015Bci (kardynalna, sta\u0142a, zmienna) i \u017Cywio\u0142y (ogie\u0144, ziemia, powietrze, woda).',
+  },
+
+  // Aspect game
+  'aspect.game.title':      { en: 'Aspect Flashcards', pl: 'Aspekty' },
+  'aspect.field.symbol':    { en: 'Symbol',            pl: 'Symbol' },
+  'aspect.field.name':      { en: 'Aspect',            pl: 'Aspekt' },
+  'aspect.modal.pickName':  { en: 'Choose Aspect',     pl: 'Wybierz aspekt' },
+  'aspect.modal.pickSymbol':{ en: 'Choose Symbol',     pl: 'Wybierz symbol' },
+
+  // Fundament game
+  'fundament.game.title':      { en: 'Foundation Flashcards', pl: 'Fundament' },
+  'fundament.field.symbol':    { en: 'Symbol',               pl: 'Symbol' },
+  'fundament.field.name':      { en: 'Name',                 pl: 'Nazwa' },
+  'fundament.modal.pickName':  { en: 'Choose Name',          pl: 'Wybierz nazw\u0119' },
+  'fundament.modal.pickSymbol':{ en: 'Choose Symbol',        pl: 'Wybierz symbol' },
+
+  // Shared mode labels
+  'game.iconToName': { en: 'Symbol \u2192 Name', pl: 'Symbol \u2192 Nazwa' },
+  'game.nameToIcon': { en: 'Name \u2192 Symbol', pl: 'Nazwa \u2192 Symbol' },
 
   // Fuzzy warning
   'fuzzy.title':       { en: 'Are you sure?',       pl: 'Czy jeste\u015B pewien?' },

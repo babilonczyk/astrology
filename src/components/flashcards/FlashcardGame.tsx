@@ -10,9 +10,12 @@ import { getCookie, setCookie } from '../../lib/cookies';
 import { SelectionModal } from './SelectionModal';
 import { ElementModal } from './ElementModal';
 import { AstroSymbol } from './AstroSymbol';
+import { AspectsGame } from '../aspects/AspectsGame';
+import { FundamentGame } from '../fundament/FundamentGame';
 
 export function FlashcardGame() {
   const [locale, setLocale] = useState<Locale>('en');
+  const [subGame, setSubGame] = useState<'aspect' | 'fundament' | null>(null);
   const [gameType, setGameType] = useState<AstroGameType>('full');
   const [mode, setMode] = useState<number | null>(null);
   const [currentEntry, setCurrentEntry] = useState<ZodiacEntry | null>(null);
@@ -128,6 +131,15 @@ export function FlashcardGame() {
   const displayVal = (field: FieldType, v: string) =>
     formatFieldDisplay(field, v, locale);
 
+  /* ── Sub-games (Aspects / Fundament) ── */
+
+  if (subGame === 'aspect') {
+    return <AspectsGame onBack={() => setSubGame(null)} />;
+  }
+  if (subGame === 'fundament') {
+    return <FundamentGame onBack={() => setSubGame(null)} />;
+  }
+
   /* ── Mode Selector ────────────────────────────────── */
 
   if (mode === null) {
@@ -167,6 +179,26 @@ export function FlashcardGame() {
             >
               <span className="text-2xl">{'\u2643'}</span>
               <div className="text-sm font-semibold text-text-strong">{t('game.previewPlanet', locale)}</div>
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22 }}
+              onClick={() => setSubGame('aspect')}
+              className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)]"
+            >
+              <span className="text-2xl">{'\u260C'}</span>
+              <div className="text-sm font-semibold text-text-strong">{t('game.previewAspects', locale)}</div>
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28 }}
+              onClick={() => setSubGame('fundament')}
+              className="glass-gold rounded-2xl p-4 sm:p-5 flex flex-col items-center gap-2 cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(201,165,92,0.12)]"
+            >
+              <span className="text-2xl">{'\u25B3'}</span>
+              <div className="text-sm font-semibold text-text-strong">{t('game.previewFundament', locale)}</div>
             </motion.button>
           </div>
 
